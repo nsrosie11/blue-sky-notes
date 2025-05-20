@@ -1,4 +1,3 @@
-
 import NavBar from "@/components/NavBar";
 import { Button } from "@/components/ui/button";
 import { Card, CardContent, CardDescription, CardHeader, CardTitle } from "@/components/ui/card";
@@ -6,6 +5,7 @@ import { Input } from "@/components/ui/input";
 import { Label } from "@/components/ui/label";
 import { Separator } from "@/components/ui/separator";
 import { useToast } from "@/components/ui/use-toast";
+import { signOut } from "@/services/authService";
 import { useState } from "react";
 import { useNavigate } from "react-router-dom";
 
@@ -91,8 +91,7 @@ const Profile = () => {
 
   const handleLogout = async () => {
     try {
-      // Simulate API call to Supabase
-      await new Promise(resolve => setTimeout(resolve, 500));
+      await signOut();
       
       toast({
         title: "Logged out",
@@ -111,7 +110,7 @@ const Profile = () => {
 
   return (
     <div className="min-h-screen flex flex-col bg-secondary/30">
-      <NavBar isLoggedIn={true} username={user.name} onLogout={handleLogout} />
+      <NavBar isLoggedIn={true} username={user.name} />
       <main className="flex-1 container mx-auto px-4 py-8">
         <div className="max-w-3xl mx-auto">
           <h1 className="text-3xl font-bold mb-8">Profile</h1>
