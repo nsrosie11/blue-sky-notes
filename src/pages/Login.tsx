@@ -4,6 +4,7 @@ import LoginForm from "@/components/auth/LoginForm";
 import { useState } from "react";
 import { useToast } from "@/components/ui/use-toast";
 import { useNavigate } from "react-router-dom";
+import { signIn } from "@/services/authService";
 
 const Login = () => {
   const [isLoading, setIsLoading] = useState(false);
@@ -13,24 +14,19 @@ const Login = () => {
   const handleLogin = async (email: string, password: string) => {
     setIsLoading(true);
     
-    // This is a placeholder for the actual Supabase authentication
-    // In a real app, this would use supabase.auth.signInWithPassword
     try {
-      // Simulate API call
-      await new Promise(resolve => setTimeout(resolve, 1000));
+      await signIn(email, password);
       
-      // For now, let's just show a success toast and redirect
-      // This would be replaced with actual authentication logic later
       toast({
         title: "Login successful!",
         description: "Welcome back to Daily Notes",
       });
       navigate("/notes");
-    } catch (error) {
+    } catch (error: any) {
       console.error("Login error:", error);
       toast({
         title: "Login failed",
-        description: "Please check your credentials and try again",
+        description: error.message || "Please check your credentials and try again",
         variant: "destructive",
       });
     } finally {

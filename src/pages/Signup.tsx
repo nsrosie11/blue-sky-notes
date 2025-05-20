@@ -4,6 +4,7 @@ import SignupForm from "@/components/auth/SignupForm";
 import { useState } from "react";
 import { useToast } from "@/components/ui/use-toast";
 import { useNavigate } from "react-router-dom";
+import { signUp } from "@/services/authService";
 
 const Signup = () => {
   const [isLoading, setIsLoading] = useState(false);
@@ -13,23 +14,19 @@ const Signup = () => {
   const handleSignup = async (email: string, password: string, name: string) => {
     setIsLoading(true);
     
-    // This is a placeholder for the actual Supabase authentication
-    // In a real app, this would use supabase.auth.signUp
     try {
-      // Simulate API call
-      await new Promise(resolve => setTimeout(resolve, 1000));
+      await signUp(email, password, name);
       
-      // For demo purposes, show success and redirect
       toast({
         title: "Account created!",
         description: "Welcome to Daily Notes",
       });
       navigate("/notes");
-    } catch (error) {
+    } catch (error: any) {
       console.error("Signup error:", error);
       toast({
         title: "Signup failed",
-        description: "There was an error creating your account",
+        description: error.message || "There was an error creating your account",
         variant: "destructive",
       });
     } finally {

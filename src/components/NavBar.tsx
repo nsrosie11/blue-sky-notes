@@ -1,21 +1,64 @@
 
 import { Button } from "@/components/ui/button";
-import { Link } from "react-router-dom";
+import { Link, useNavigate } from "react-router-dom";
 import { Home, User, NotepadText, Menu, X } from "lucide-react";
-import { useState } from "react";
+import { useState, useEffect } from "react";
 import { cn } from "@/lib/utils";
+import { signOut, getCurrentUser } from "@/services/authService";
+import { useToast } from "@/components/ui/use-toast";
 
 interface NavBarProps {
   isLoggedIn?: boolean;
   username?: string;
-  onLogout?: () => void;
 }
 
-const NavBar = ({ isLoggedIn = false, username = "", onLogout }: NavBarProps) => {
+const NavBar = ({ isLoggedIn: propIsLoggedIn, username = "" }: NavBarProps) => {
   const [isMobileMenuOpen, setIsMobileMenuOpen] = useState(false);
+  const [isLoggedIn, setIsLoggedIn] = useState(propIsLoggedIn || false);
+  const navigate = useNavigate();
+  const { toast } = useToast();
+  
+  useEffect(() => {
+    // Check authentication status on component mount
+    const checkAuth = async () => {
+      try {
+        const user = await getCurrentUser();
+        setIsLoggedIn(!!user);
+      } catch (error) {
+        console.error("Error checking auth status:", error);
+      }
+    };
+    
+    checkAuth();
+  }, []);
+  
+  useEffect(() => {
+    if (propIsLoggedIn !== undefined) {
+      setIsLoggedIn(propIsLoggedIn);
+    }
+  }, [propIsLoggedIn]);
   
   const toggleMobileMenu = () => {
     setIsMobileMenuOpen(!isMobileMenuOpen);
+  };
+
+  const handleLogout = async () => {
+    try {
+      await signOut();
+      toast({
+        title: "Logged out",
+        description: "You have been successfully logged out",
+      });
+      setIsLoggedIn(false);
+      navigate("/");
+    } catch (error) {
+      console.error("Logout error:", error);
+      toast({
+        title: "Logout failed",
+        description: "There was an error logging out",
+        variant: "destructive",
+      });
+    }
   };
 
   return (
@@ -47,7 +90,7 @@ const NavBar = ({ isLoggedIn = false, username = "", onLogout }: NavBarProps) =>
                   <span>Profile</span>
                 </Link>
                 <div className="ml-3 relative">
-                  <Button variant="outline" onClick={onLogout}>Logout</Button>
+                  <Button variant="outline" onClick={handleLogout}>Logout</Button>
                 </div>
               </>
             ) : (
@@ -97,7 +140,7 @@ const NavBar = ({ isLoggedIn = false, username = "", onLogout }: NavBarProps) =>
                 Profile
               </Link>
               <button
-                onClick={onLogout}
+                onClick={handleLogout}
                 className="block w-full text-left px-3 py-2 rounded-md text-base font-medium text-gray-700 hover:text-primary hover:bg-secondary"
               >
                 Logout
