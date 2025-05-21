@@ -74,10 +74,12 @@ const NavBar = ({ isLoggedIn: propIsLoggedIn, username = "" }: NavBarProps) => {
           
           {/* Desktop Navigation */}
           <div className="hidden md:flex md:items-center md:space-x-4">
-            <Link to="/" className="px-3 py-2 rounded-md text-sm font-medium text-gray-700 hover:text-primary hover:bg-secondary flex items-center gap-2">
-              <Home className="h-4 w-4" />
-              <span>Home</span>
-            </Link>
+            {!isLoggedIn && (
+              <Link to="/" className="px-3 py-2 rounded-md text-sm font-medium text-gray-700 hover:text-primary hover:bg-secondary flex items-center gap-2">
+                <Home className="h-4 w-4" />
+                <span>Home</span>
+              </Link>
+            )}
             
             {isLoggedIn ? (
               <>
@@ -97,9 +99,6 @@ const NavBar = ({ isLoggedIn: propIsLoggedIn, username = "" }: NavBarProps) => {
               <div className="flex space-x-3">
                 <Button variant="outline" asChild>
                   <Link to="/login">Login</Link>
-                </Button>
-                <Button asChild>
-                  <Link to="/signup">Sign Up</Link>
                 </Button>
               </div>
             )}
@@ -127,9 +126,11 @@ const NavBar = ({ isLoggedIn: propIsLoggedIn, username = "" }: NavBarProps) => {
         isMobileMenuOpen ? "block" : "hidden"
       )}>
         <div className="px-2 pt-2 pb-3 space-y-1 sm:px-3 bg-white">
-          <Link to="/" className="block px-3 py-2 rounded-md text-base font-medium text-gray-700 hover:text-primary hover:bg-secondary">
-            Home
-          </Link>
+          {!isLoggedIn && (
+            <Link to="/" className="block px-3 py-2 rounded-md text-base font-medium text-gray-700 hover:text-primary hover:bg-secondary">
+              Home
+            </Link>
+          )}
           
           {isLoggedIn ? (
             <>
@@ -150,9 +151,6 @@ const NavBar = ({ isLoggedIn: propIsLoggedIn, username = "" }: NavBarProps) => {
             <div className="mt-4 flex flex-col space-y-2 px-3">
               <Button variant="outline" asChild className="w-full">
                 <Link to="/login">Login</Link>
-              </Button>
-              <Button asChild className="w-full">
-                <Link to="/signup">Sign Up</Link>
               </Button>
             </div>
           )}

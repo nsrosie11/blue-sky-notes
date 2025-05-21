@@ -21,7 +21,7 @@ const Login = () => {
         title: "Login successful!",
         description: "Welcome back to Daily Notes",
       });
-      navigate("/notes");
+      navigate("/profile");
     } catch (error: any) {
       console.error("Login error:", error);
       toast({
