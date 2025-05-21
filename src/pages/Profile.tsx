@@ -1,3 +1,4 @@
+
 import NavBar from "@/components/NavBar";
 import { Button } from "@/components/ui/button";
 import { Card, CardContent, CardDescription, CardHeader, CardTitle } from "@/components/ui/card";
@@ -5,8 +6,8 @@ import { Input } from "@/components/ui/input";
 import { Label } from "@/components/ui/label";
 import { Separator } from "@/components/ui/separator";
 import { useToast } from "@/components/ui/use-toast";
-import { signOut } from "@/services/authService";
-import { useState } from "react";
+import { signOut, getCurrentUser } from "@/services/authService";
+import { useState, useEffect } from "react";
 import { useNavigate } from "react-router-dom";
 
 const Profile = () => {
@@ -15,17 +16,52 @@ const Profile = () => {
   const { toast } = useToast();
   const navigate = useNavigate();
 
-  // Sample user data - would come from Supabase in a real app
+  // User data state
   const [user, setUser] = useState({
-    name: "John Doe",
-    email: "john.doe@example.com",
+    id: "",
+    name: "",
+    email: "",
   });
+
+  // Load user data on component mount
+  useEffect(() => {
+    const loadUser = async () => {
+      try {
+        const currentUser = await getCurrentUser();
+        if (currentUser) {
+          setUser({
+            id: currentUser.id,
+            name: currentUser.email?.split('@')[0] || "User",
+            email: currentUser.email || "",
+          });
+        } else {
+          // Redirect to login if not authenticated
+          navigate("/login");
+        }
+      } catch (error) {
+        console.error("Error loading user:", error);
+        toast({
+          title: "Authentication error",
+          description: "Please login again",
+          variant: "destructive",
+        });
+        navigate("/login");
+      }
+    };
+
+    loadUser();
+  }, [navigate, toast]);
 
   // Form states
   const [name, setName] = useState(user.name);
   const [currentPassword, setCurrentPassword] = useState("");
   const [newPassword, setNewPassword] = useState("");
   const [confirmPassword, setConfirmPassword] = useState("");
+
+  // Update name when user data loads
+  useEffect(() => {
+    setName(user.name);
+  }, [user.name]);
 
   const handleUpdateProfile = async (e: React.FormEvent) => {
     e.preventDefault();
@@ -116,6 +152,33 @@ const Profile = () => {
           <h1 className="text-3xl font-bold mb-8">Profile</h1>
 
           <div className="space-y-8">
+            {/* User Information */}
+            <Card>
+              <CardHeader>
+                <CardTitle>User Information</CardTitle>
+                <CardDescription>Your account details</CardDescription>
+              </CardHeader>
+              <CardContent>
+                <div className="space-y-4">
+                  <div className="grid grid-cols-1 gap-4">
+                    <div className="space-y-2">
+                      <Label>User ID</Label>
+                      <Input value={user.id} readOnly disabled className="bg-gray-50" />
+                    </div>
+                    <div className="space-y-2">
+                      <Label>Email</Label>
+                      <Input value={user.email} readOnly disabled className="bg-gray-50" />
+                    </div>
+                  </div>
+                  <div className="flex justify-end">
+                    <Button variant="destructive" onClick={handleLogout}>
+                      Logout
+                    </Button>
+                  </div>
+                </div>
+              </CardContent>
+            </Card>
+
             {/* Profile Information */}
             <Card>
               <CardHeader>
