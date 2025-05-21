@@ -22,6 +22,9 @@ const Index = () => {
             </p>
             <div className="flex flex-col sm:flex-row justify-center gap-4">
               <Button asChild size="lg" className="text-base">
+                <Link to="/signup">Buat Akun Gratis</Link>
+              </Button>
+              <Button asChild variant="outline" size="lg" className="text-base">
                 <Link to="/login">Masuk</Link>
               </Button>
             </div>

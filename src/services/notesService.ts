@@ -24,16 +24,17 @@ export const fetchNotes = async (): Promise<Note[]> => {
 };
 
 export const createNote = async (title: string, content: string): Promise<Note> => {
-  // Get the current user to get their ID
+  // Try to get current user, but don't require it
   const { data: { user } } = await supabase.auth.getUser();
-  
-  if (!user) {
-    throw new Error('User must be logged in to create notes');
-  }
+  const user_id = user?.id || null;
 
   const { data, error } = await supabase
     .from('notes')
-    .insert({ title, content, user_id: user.id })
+    .insert({ 
+      title, 
+      content,
+      user_id 
+    })
     .select()
     .single();
   
